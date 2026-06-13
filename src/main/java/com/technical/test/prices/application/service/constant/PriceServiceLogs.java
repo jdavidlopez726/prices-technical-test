@@ -5,14 +5,14 @@ public final class PriceServiceLogs {
     public static final String BASE_LOG = "[{}][{}] {}";
 
     public static final String PRICE_SERVICE_CLASS = "PriceServiceImpl";
-    public static final String RETRIEVE_PRICE_METHOD = "findApplicablePrice";
+    public static final String LIST_PRICES_METHOD = "findApplicablePrices";
 
-    public static final String RETRIEVE_PRICE_REQUEST =
-            "Received retrieve price request for brandId=%s, productId=%s, date=%s";
-    public static final String RETRIEVE_PRICE_FOUND_PRICE =
-            "Found price for brandId=%s, productId=%s, date=%s, price=%s";
-    public static final String RETRIEVE_PRICE_METHOD_RESPONSE =
-            "Returning retrieve price response for brandId=%s, productId=%s, date=%s";
+    public static final String LIST_PRICES_REQUEST =
+            "Received list prices request for brandId=%s, productId=%s, date=%s";
+    public static final String LIST_PRICES_FOUND =
+            "Found %d prices for brandId=%s, productId=%s, date=%s";
+    public static final String LIST_PRICES_RESPONSE =
+            "Returning list prices response for brandId=%s, productId=%s, date=%s";
 
     private PriceServiceLogs() {}
 }
