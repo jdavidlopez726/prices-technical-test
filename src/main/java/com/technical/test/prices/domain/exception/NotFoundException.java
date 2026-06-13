@@ -5,9 +5,9 @@ import lombok.Getter;
 @Getter
 public class NotFoundException extends RuntimeException {
 
-    private final ErrorDefinitionEnum error;
+    private final DomainDefinitionEnum error;
 
-    public NotFoundException(ErrorDefinitionEnum error, Object... args) {
+    public NotFoundException(DomainDefinitionEnum error, Object... args) {
         super(error.format(args));
         this.error = error;
     }

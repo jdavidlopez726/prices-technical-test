@@ -1,7 +1,7 @@
 package com.technical.test.prices.application.service;
 
 import com.technical.test.prices.application.service.constant.PriceServiceLogs;
-import com.technical.test.prices.domain.exception.ErrorDefinitionEnum;
+import com.technical.test.prices.domain.exception.DomainDefinitionEnum;
 import com.technical.test.prices.domain.exception.NotFoundException;
 import com.technical.test.prices.domain.model.Price;
 import com.technical.test.prices.domain.repository.PriceRepositoryPort;
@@ -25,7 +25,7 @@ public class PriceServiceImpl implements PriceServicePort {
 
         List<Price> prices = priceRepository.findApplicablePrices(brandId, productId, applicationDate);
         if (prices.isEmpty()) {
-            throw new NotFoundException(ErrorDefinitionEnum.PRICE_NOT_FOUND, brandId, productId, applicationDate);
+            throw new NotFoundException(DomainDefinitionEnum.PRICE_NOT_FOUND, brandId, productId, applicationDate);
         }
 
         log.debug(PriceServiceLogs.BASE_LOG, PriceServiceLogs.PRICE_SERVICE_CLASS, PriceServiceLogs.LIST_PRICES_METHOD,
