@@ -11,7 +11,7 @@ import lombok.Setter;
 @Table(name = "products")
 @Getter
 @Setter
-public class ProductEntity {
+public class ProductEntity extends AuditableEntity {
 
     @Id
     @Column(name = "product_id")

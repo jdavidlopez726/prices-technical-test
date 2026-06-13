@@ -19,7 +19,7 @@ import lombok.Setter;
 @Table(name = "prices")
 @Getter
 @Setter
-public class PriceEntity {
+public class PriceEntity extends AuditableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
