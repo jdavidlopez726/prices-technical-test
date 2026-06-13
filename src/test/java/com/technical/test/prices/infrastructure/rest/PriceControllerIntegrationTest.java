@@ -138,15 +138,15 @@ class PriceControllerIntegrationTest {
     }
 
     @Test
-    void givenNonExistentPrice_whenGetApplicablePrices_thenReturnsEmptyList() throws Exception {
+    void givenNonExistentPrice_whenGetApplicablePrices_thenReturnsNotFound() throws Exception {
         mockMvc.perform(get("/prices")
                         .param("date", "2000-01-01T00:00:00")
                         .param("productId", "35455")
                         .param("brandId", "1")
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$").isArray())
-                .andExpect(jsonPath("$").isEmpty());
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.status").value(404))
+                .andExpect(jsonPath("$.code").value("PRICE-001"))
+                .andExpect(jsonPath("$.detail").isString());
     }
 }
