@@ -25,6 +25,16 @@ public class GlobalExceptionHandler {
                         ex.getError().getCode()));
     }
 
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<ErrorResponse> handleMissingParameter(MissingServletRequestParameterException ex) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        return ResponseEntity.status(status)
+                .body(new ErrorResponse(
+                        RestErrorConstants.MSG_MISSING_PARAMETER.formatted(ex.getParameterName(), ex.getParameterType()),
+                        status.value(),
+                        RestErrorConstants.CODE_MISSING_PARAMETER));
+    }
+
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<ErrorResponse> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
         HttpStatus status = HttpStatus.BAD_REQUEST;
