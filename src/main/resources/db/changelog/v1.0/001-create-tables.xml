@@ -111,4 +111,21 @@
         </rollback>
     </changeSet>
 
+    <changeSet id="001-04-create-prices-index" author="josed">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="idx_prices_brand_product"/>
+            </not>
+        </preConditions>
+
+        <createIndex tableName="prices" indexName="idx_prices_brand_product">
+            <column name="brand_id"/>
+            <column name="product_id"/>
+        </createIndex>
+
+        <rollback>
+            <dropIndex tableName="prices" indexName="idx_prices_brand_product"/>
+        </rollback>
+    </changeSet>
+
 </databaseChangeLog>
