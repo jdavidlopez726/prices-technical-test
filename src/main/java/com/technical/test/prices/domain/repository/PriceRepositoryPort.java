@@ -2,9 +2,9 @@ package com.technical.test.prices.domain.repository;
 
 import com.technical.test.prices.domain.model.Price;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Optional;
 
 public interface PriceRepositoryPort {
 
-    List<Price> findApplicablePrices(Long brandId, Long productId, LocalDateTime applicationDate);
+    Optional<Price> findApplicablePrice(Long brandId, Long productId, LocalDateTime applicationDate);
 }

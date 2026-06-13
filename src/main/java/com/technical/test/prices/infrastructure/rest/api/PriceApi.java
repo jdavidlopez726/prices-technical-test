@@ -2,7 +2,6 @@ package com.technical.test.prices.infrastructure.rest.api;
 
 import com.technical.test.prices.infrastructure.rest.dto.ErrorResponse;
 import com.technical.test.prices.infrastructure.rest.dto.PriceResponse;
-import java.util.List;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -21,13 +20,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping("/prices")
 public interface PriceApi {
 
-    @Operation(summary = "List applicable prices", description = "Returns all prices with the highest priority for a product and brand at a given date")
-    @ApiResponse(responseCode = "200", description = "Prices found",
+    @Operation(summary = "Get applicable price", description = "Returns the highest-priority price for a product and brand at a given date")
+    @ApiResponse(responseCode = "200", description = "Price found",
             content = @Content(schema = @Schema(implementation = PriceResponse.class)))
-    @ApiResponse(responseCode = "404", description = "No applicable prices found",
+    @ApiResponse(responseCode = "404", description = "No applicable price found",
             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     @GetMapping
-    ResponseEntity<List<PriceResponse>> getApplicablePrices(
+    ResponseEntity<PriceResponse> getApplicablePrice(
             @Parameter(description = "Application date", example = "2020-06-14T10:00:00")
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime date,
             @Parameter(description = "Product identifier", example = "35455")

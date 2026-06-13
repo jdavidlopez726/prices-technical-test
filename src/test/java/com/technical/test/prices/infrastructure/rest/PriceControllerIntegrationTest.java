@@ -36,12 +36,12 @@ class PriceControllerIntegrationTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[0].brandId").value(1))
-                .andExpect(jsonPath("$[0].productId").value(35455))
-                .andExpect(jsonPath("$[0].priceList").value(1))
-                .andExpect(jsonPath("$[0].startDate").value("2020-06-14T00:00:00"))
-                .andExpect(jsonPath("$[0].endDate").value("2020-12-31T23:59:59"))
-                .andExpect(jsonPath("$[0].price").value(35.50));
+                .andExpect(jsonPath("$.brandId").value(1))
+                .andExpect(jsonPath("$.productId").value(35455))
+                .andExpect(jsonPath("$.priceList").value(1))
+                .andExpect(jsonPath("$.startDate").value("2020-06-14T00:00:00"))
+                .andExpect(jsonPath("$.endDate").value("2020-12-31T23:59:59"))
+                .andExpect(jsonPath("$.price").value(35.50));
     }
 
     @Test
@@ -53,12 +53,12 @@ class PriceControllerIntegrationTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[0].brandId").value(1))
-                .andExpect(jsonPath("$[0].productId").value(35455))
-                .andExpect(jsonPath("$[0].priceList").value(2))
-                .andExpect(jsonPath("$[0].startDate").value("2020-06-14T15:00:00"))
-                .andExpect(jsonPath("$[0].endDate").value("2020-06-14T18:30:00"))
-                .andExpect(jsonPath("$[0].price").value(25.45));
+                .andExpect(jsonPath("$.brandId").value(1))
+                .andExpect(jsonPath("$.productId").value(35455))
+                .andExpect(jsonPath("$.priceList").value(2))
+                .andExpect(jsonPath("$.startDate").value("2020-06-14T15:00:00"))
+                .andExpect(jsonPath("$.endDate").value("2020-06-14T18:30:00"))
+                .andExpect(jsonPath("$.price").value(25.45));
     }
 
     @Test
@@ -70,12 +70,12 @@ class PriceControllerIntegrationTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[0].brandId").value(1))
-                .andExpect(jsonPath("$[0].productId").value(35455))
-                .andExpect(jsonPath("$[0].priceList").value(1))
-                .andExpect(jsonPath("$[0].startDate").value("2020-06-14T00:00:00"))
-                .andExpect(jsonPath("$[0].endDate").value("2020-12-31T23:59:59"))
-                .andExpect(jsonPath("$[0].price").value(35.50));
+                .andExpect(jsonPath("$.brandId").value(1))
+                .andExpect(jsonPath("$.productId").value(35455))
+                .andExpect(jsonPath("$.priceList").value(1))
+                .andExpect(jsonPath("$.startDate").value("2020-06-14T00:00:00"))
+                .andExpect(jsonPath("$.endDate").value("2020-12-31T23:59:59"))
+                .andExpect(jsonPath("$.price").value(35.50));
     }
 
     @Test
@@ -87,12 +87,12 @@ class PriceControllerIntegrationTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[0].brandId").value(1))
-                .andExpect(jsonPath("$[0].productId").value(35455))
-                .andExpect(jsonPath("$[0].priceList").value(3))
-                .andExpect(jsonPath("$[0].startDate").value("2020-06-15T00:00:00"))
-                .andExpect(jsonPath("$[0].endDate").value("2020-06-15T11:00:00"))
-                .andExpect(jsonPath("$[0].price").value(30.50));
+                .andExpect(jsonPath("$.brandId").value(1))
+                .andExpect(jsonPath("$.productId").value(35455))
+                .andExpect(jsonPath("$.priceList").value(3))
+                .andExpect(jsonPath("$.startDate").value("2020-06-15T00:00:00"))
+                .andExpect(jsonPath("$.endDate").value("2020-06-15T11:00:00"))
+                .andExpect(jsonPath("$.price").value(30.50));
     }
 
     @Test
@@ -104,12 +104,12 @@ class PriceControllerIntegrationTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[0].brandId").value(1))
-                .andExpect(jsonPath("$[0].productId").value(35455))
-                .andExpect(jsonPath("$[0].priceList").value(4))
-                .andExpect(jsonPath("$[0].startDate").value("2020-06-15T16:00:00"))
-                .andExpect(jsonPath("$[0].endDate").value("2020-12-31T23:59:59"))
-                .andExpect(jsonPath("$[0].price").value(38.95));
+                .andExpect(jsonPath("$.brandId").value(1))
+                .andExpect(jsonPath("$.productId").value(35455))
+                .andExpect(jsonPath("$.priceList").value(4))
+                .andExpect(jsonPath("$.startDate").value("2020-06-15T16:00:00"))
+                .andExpect(jsonPath("$.endDate").value("2020-12-31T23:59:59"))
+                .andExpect(jsonPath("$.price").value(38.95));
     }
 
     @Test
