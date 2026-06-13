@@ -1,3 +1,26 @@
 spring:
   application:
     name: prices
+
+  datasource:
+    url: jdbc:h2:mem:pricesdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
+
+  h2:
+    console:
+      enabled: true           #http://localhost:8080/h2-console
+      path: /h2-console
+

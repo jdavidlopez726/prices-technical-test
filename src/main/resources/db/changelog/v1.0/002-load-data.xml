@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="002-01-load-products-data" author="josed">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM products</sqlCheck>
+        </preConditions>
+
+        <insert tableName="products">
+            <column name="product_id" valueNumeric="35455"/>
+            <column name="name" value="product1"/>
+        </insert>
+
+        <rollback>
+            <delete tableName="products">
+                <where>product_id = 35455</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="002-02-load-brands-data" author="josed">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM brands</sqlCheck>
+        </preConditions>
+
+        <insert tableName="brands">
+            <column name="brand_id" valueNumeric="1"/>
+            <column name="name" value="ZARA"/>
+        </insert>
+
+        <rollback>
+            <delete tableName="brands">
+                <where>brand_id = 1</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="002-03-load-prices-data" author="josed">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM prices</sqlCheck>
+        </preConditions>
+
+        <insert tableName="prices">
+            <column name="brand_id" valueNumeric="1"/>
+            <column name="start_date" valueDate="2020-06-14T00:00:00"/>
+            <column name="end_date" valueDate="2020-12-31T23:59:59"/>
+            <column name="price_list" valueNumeric="1"/>
+            <column name="product_id" valueNumeric="35455"/>
+            <column name="priority" valueNumeric="0"/>
+            <column name="price" valueNumeric="35.50"/>
+            <column name="curr" value="EUR"/>
+        </insert>
+        <insert tableName="prices">
+            <column name="brand_id" valueNumeric="1"/>
+            <column name="start_date" valueDate="2020-06-14T15:00:00"/>
+            <column name="end_date" valueDate="2020-06-14T18:30:00"/>
+            <column name="price_list" valueNumeric="2"/>
+            <column name="product_id" valueNumeric="35455"/>
+            <column name="priority" valueNumeric="1"/>
+            <column name="price" valueNumeric="25.45"/>
+            <column name="curr" value="EUR"/>
+        </insert>
+        <insert tableName="prices">
+            <column name="brand_id" valueNumeric="1"/>
+            <column name="start_date" valueDate="2020-06-15T00:00:00"/>
+            <column name="end_date" valueDate="2020-06-15T11:00:00"/>
+            <column name="price_list" valueNumeric="3"/>
+            <column name="product_id" valueNumeric="35455"/>
+            <column name="priority" valueNumeric="1"/>
+            <column name="price" valueNumeric="30.50"/>
+            <column name="curr" value="EUR"/>
+        </insert>
+        <insert tableName="prices">
+            <column name="brand_id" valueNumeric="1"/>
+            <column name="start_date" valueDate="2020-06-15T16:00:00"/>
+            <column name="end_date" valueDate="2020-12-31T23:59:59"/>
+            <column name="price_list" valueNumeric="4"/>
+            <column name="product_id" valueNumeric="35455"/>
+            <column name="priority" valueNumeric="1"/>
+            <column name="price" valueNumeric="38.95"/>
+            <column name="curr" value="EUR"/>
+        </insert>
+
+        <rollback>
+            <delete tableName="prices">
+                <where>product_id = 35455</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>
