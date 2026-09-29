@@ -41,7 +41,8 @@ class PriceControllerIntegrationTest {
                 .andExpect(jsonPath("$.priceList").value(1))
                 .andExpect(jsonPath("$.startDate").value("2020-06-14T00:00:00"))
                 .andExpect(jsonPath("$.endDate").value("2020-12-31T23:59:59"))
-                .andExpect(jsonPath("$.price").value(35.50));
+                .andExpect(jsonPath("$.price.amount").value(35.50))
+                .andExpect(jsonPath("$.price.currency").value("EUR"));
     }
 
     @Test
@@ -58,7 +59,8 @@ class PriceControllerIntegrationTest {
                 .andExpect(jsonPath("$.priceList").value(2))
                 .andExpect(jsonPath("$.startDate").value("2020-06-14T15:00:00"))
                 .andExpect(jsonPath("$.endDate").value("2020-06-14T18:30:00"))
-                .andExpect(jsonPath("$.price").value(25.45));
+                .andExpect(jsonPath("$.price.amount").value(25.45))
+                .andExpect(jsonPath("$.price.currency").value("EUR"));
     }
 
     @Test
@@ -75,7 +77,8 @@ class PriceControllerIntegrationTest {
                 .andExpect(jsonPath("$.priceList").value(1))
                 .andExpect(jsonPath("$.startDate").value("2020-06-14T00:00:00"))
                 .andExpect(jsonPath("$.endDate").value("2020-12-31T23:59:59"))
-                .andExpect(jsonPath("$.price").value(35.50));
+                .andExpect(jsonPath("$.price.amount").value(35.50))
+                .andExpect(jsonPath("$.price.currency").value("EUR"));
     }
 
     @Test
@@ -92,7 +95,8 @@ class PriceControllerIntegrationTest {
                 .andExpect(jsonPath("$.priceList").value(3))
                 .andExpect(jsonPath("$.startDate").value("2020-06-15T00:00:00"))
                 .andExpect(jsonPath("$.endDate").value("2020-06-15T11:00:00"))
-                .andExpect(jsonPath("$.price").value(30.50));
+                .andExpect(jsonPath("$.price.amount").value(30.50))
+                .andExpect(jsonPath("$.price.currency").value("EUR"));
     }
 
     @Test
@@ -109,7 +113,8 @@ class PriceControllerIntegrationTest {
                 .andExpect(jsonPath("$.priceList").value(4))
                 .andExpect(jsonPath("$.startDate").value("2020-06-15T16:00:00"))
                 .andExpect(jsonPath("$.endDate").value("2020-12-31T23:59:59"))
-                .andExpect(jsonPath("$.price").value(38.95));
+                .andExpect(jsonPath("$.price.amount").value(38.95))
+                .andExpect(jsonPath("$.price.currency").value("EUR"));
     }
 
     @Test

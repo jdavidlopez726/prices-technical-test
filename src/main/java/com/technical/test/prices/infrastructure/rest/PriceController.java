@@ -1,6 +1,8 @@
 package com.technical.test.prices.infrastructure.rest;
 
 import com.technical.test.prices.application.service.PriceServicePort;
+import com.technical.test.prices.domain.model.BrandId;
+import com.technical.test.prices.domain.model.ProductId;
 import com.technical.test.prices.infrastructure.rest.api.PriceApi;
 import com.technical.test.prices.infrastructure.rest.dto.PriceResponse;
 import com.technical.test.prices.infrastructure.rest.mapper.PriceResponseMapper;
@@ -18,6 +20,7 @@ public class PriceController implements PriceApi {
 
     @Override
     public ResponseEntity<PriceResponse> getApplicablePrice(LocalDateTime date, Long productId, Long brandId) {
-        return ResponseEntity.ok(priceResponseMapper.toResponse(priceService.findApplicablePrice(brandId, productId, date)));
+        return ResponseEntity.ok(priceResponseMapper.toResponse(
+                priceService.findApplicablePrice(new BrandId(brandId), new ProductId(productId), date)));
     }
 }
