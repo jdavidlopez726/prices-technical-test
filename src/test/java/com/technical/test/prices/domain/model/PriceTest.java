@@ -12,7 +12,8 @@ class PriceTest {
     private static final LocalDateTime START = LocalDateTime.parse("2020-06-14T15:00:00");
     private static final LocalDateTime END = LocalDateTime.parse("2020-06-14T18:30:00");
 
-    private final Price price = new Price(1L, 35455L, 2L, START, END, 1, new BigDecimal("25.45"), "EUR");
+    private final Price price = new Price(new BrandId(1L), new ProductId(35455L), 2L, START, END, 1,
+            new BigDecimal("25.45"), "EUR");
 
     @ParameterizedTest
     @CsvSource({

@@ -4,8 +4,8 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public record Price(
-        Long brandId,
-        Long productId,
+        BrandId brandId,
+        ProductId productId,
         Long priceList,
         LocalDateTime startDate,
         LocalDateTime endDate,

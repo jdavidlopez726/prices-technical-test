@@ -7,7 +7,9 @@ import static org.mockito.Mockito.when;
 
 import com.technical.test.prices.domain.exception.DomainErrorDefinitionEnum;
 import com.technical.test.prices.domain.exception.NotFoundException;
+import com.technical.test.prices.domain.model.BrandId;
 import com.technical.test.prices.domain.model.Price;
+import com.technical.test.prices.domain.model.ProductId;
 import com.technical.test.prices.domain.repository.PriceRepositoryPort;
 import com.technical.test.prices.domain.service.ApplicablePriceSelector;
 import java.math.BigDecimal;
@@ -22,8 +24,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class PriceServiceImplTest {
 
-    private static final Long BRAND_ID = 1L;
-    private static final Long PRODUCT_ID = 35455L;
+    private static final BrandId BRAND_ID = new BrandId(1L);
+    private static final ProductId PRODUCT_ID = new ProductId(35455L);
     private static final LocalDateTime APPLICATION_DATE = LocalDateTime.parse("2020-06-14T16:00:00");
 
     @Mock
