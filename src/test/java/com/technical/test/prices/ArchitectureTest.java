@@ -21,8 +21,8 @@ class ArchitectureTest {
             .adapter("config", "..infrastructure.config..");
 
     @ArchTest
-    static final ArchRule domainIsFrameworkFree = noClasses()
-            .that().resideInAPackage("..domain..")
+    static final ArchRule coreIsFrameworkFree = noClasses()
+            .that().resideInAnyPackage("..domain..", "..application..")
             .should().dependOnClassesThat().resideInAnyPackage("org.springframework..", "jakarta..")
-            .because("the domain is the core of the onion and must not depend on any framework");
+            .because("domain and application are the core of the onion and must not depend on any framework");
 }
