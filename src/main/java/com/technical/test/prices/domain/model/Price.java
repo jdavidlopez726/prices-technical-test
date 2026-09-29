@@ -13,4 +13,8 @@ public record Price(
         BigDecimal price,
         String curr
 ) {
+
+    public boolean isApplicableAt(LocalDateTime date) {
+        return !date.isBefore(startDate) && !date.isAfter(endDate);
+    }
 }

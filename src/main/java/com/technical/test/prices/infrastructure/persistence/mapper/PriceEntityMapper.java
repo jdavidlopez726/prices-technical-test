@@ -2,6 +2,7 @@ package com.technical.test.prices.infrastructure.persistence.mapper;
 
 import com.technical.test.prices.domain.model.Price;
 import com.technical.test.prices.infrastructure.persistence.entity.PriceEntity;
+import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -11,4 +12,6 @@ public interface PriceEntityMapper {
     @Mapping(source = "brand.brandId", target = "brandId")
     @Mapping(source = "product.productId", target = "productId")
     Price toDomain(PriceEntity entity);
+
+    List<Price> toDomain(List<PriceEntity> entities);
 }
