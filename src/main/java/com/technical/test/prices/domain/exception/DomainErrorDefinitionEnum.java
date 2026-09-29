@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum DomainDefinitionEnum {
+public enum DomainErrorDefinitionEnum {
 
     PRICE_NOT_FOUND("PRICE-001", "No applicable price found for brandId=%d, productId=%d, date=%s");
 
