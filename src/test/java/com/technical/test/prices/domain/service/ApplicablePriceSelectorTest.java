@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 
 class ApplicablePriceSelectorTest {
 
-    private final LocalDateTime DATE = LocalDateTime.parse("2020-06-14T16:00:00");
+    private static final LocalDateTime DATE = LocalDateTime.parse("2020-06-14T16:00:00");
 
     private final ApplicablePriceSelector selector = new ApplicablePriceSelector();
 
