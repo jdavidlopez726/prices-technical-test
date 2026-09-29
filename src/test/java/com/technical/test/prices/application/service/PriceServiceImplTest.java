@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 import com.technical.test.prices.domain.exception.DomainErrorDefinitionEnum;
 import com.technical.test.prices.domain.exception.NotFoundException;
 import com.technical.test.prices.domain.model.BrandId;
+import com.technical.test.prices.domain.model.Money;
 import com.technical.test.prices.domain.model.Price;
 import com.technical.test.prices.domain.model.ProductId;
 import com.technical.test.prices.domain.repository.PriceRepositoryPort;
@@ -75,6 +76,6 @@ class PriceServiceImplTest {
 
     private Price price(Long priceList, int priority, String startDate, String endDate) {
         return new Price(BRAND_ID, PRODUCT_ID, priceList, LocalDateTime.parse(startDate), LocalDateTime.parse(endDate),
-                priority, BigDecimal.TEN, "EUR");
+                priority, Money.of(BigDecimal.TEN, "EUR"));
     }
 }

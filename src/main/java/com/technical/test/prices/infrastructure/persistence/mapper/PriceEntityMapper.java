@@ -13,6 +13,8 @@ public interface PriceEntityMapper {
 
     @Mapping(source = "brand.brandId", target = "brandId")
     @Mapping(source = "product.productId", target = "productId")
+    @Mapping(source = "price", target = "price.amount")
+    @Mapping(source = "curr", target = "price.currency")
     Price toDomain(PriceEntity entity);
 
     List<Price> toDomain(List<PriceEntity> entities);

@@ -3,6 +3,7 @@ package com.technical.test.prices.domain.service;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.technical.test.prices.domain.model.BrandId;
+import com.technical.test.prices.domain.model.Money;
 import com.technical.test.prices.domain.model.Price;
 import com.technical.test.prices.domain.model.ProductId;
 import java.math.BigDecimal;
@@ -46,6 +47,6 @@ class ApplicablePriceSelectorTest {
 
     private Price price(Long priceList, int priority, String startDate, String endDate) {
         return new Price(new BrandId(1L), new ProductId(35455L), priceList,
-                LocalDateTime.parse(startDate), LocalDateTime.parse(endDate), priority, BigDecimal.TEN, "EUR");
+                LocalDateTime.parse(startDate), LocalDateTime.parse(endDate), priority, Money.of(BigDecimal.TEN, "EUR"));
     }
 }

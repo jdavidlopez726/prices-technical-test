@@ -1,6 +1,5 @@
 package com.technical.test.prices.domain.model;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public record Price(
@@ -10,8 +9,7 @@ public record Price(
         LocalDateTime startDate,
         LocalDateTime endDate,
         Integer priority,
-        BigDecimal price,
-        String curr
+        Money price
 ) {
 
     public boolean isApplicableAt(LocalDateTime date) {
