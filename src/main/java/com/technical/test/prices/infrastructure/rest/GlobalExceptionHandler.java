@@ -6,6 +6,10 @@ import com.technical.test.prices.infrastructure.rest.dto.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authentication.AccountStatusException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -48,6 +52,31 @@ public class GlobalExceptionHandler {
                         RestErrorDefinitionEnum.TYPE_MISMATCH.format(ex.getName(), expectedType, ex.getValue()),
                         status.value(),
                         RestErrorDefinitionEnum.TYPE_MISMATCH.getCode()));
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ErrorResponse> handleMalformedRequestBody(HttpMessageNotReadableException ex) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        return ResponseEntity.status(status)
+                .body(new ErrorResponse(
+                        RestErrorDefinitionEnum.MALFORMED_REQUEST_BODY.getMessageTemplate(),
+                        status.value(),
+                        RestErrorDefinitionEnum.MALFORMED_REQUEST_BODY.getCode()));
+    }
+
+    /**
+     * Failed login. Unknown user, wrong password and disabled account all return the same message on purpose,
+     * so the response does not reveal which usernames exist.
+     */
+    @ExceptionHandler({BadCredentialsException.class, AccountStatusException.class})
+    public ResponseEntity<ErrorResponse> handleInvalidCredentials(AuthenticationException ex) {
+        HttpStatus status = HttpStatus.UNAUTHORIZED;
+        log.debug("Login failed: {}", ex.getMessage());
+        return ResponseEntity.status(status)
+                .body(new ErrorResponse(
+                        RestErrorDefinitionEnum.INVALID_CREDENTIALS.getMessageTemplate(),
+                        status.value(),
+                        RestErrorDefinitionEnum.INVALID_CREDENTIALS.getCode()));
     }
 
     @ExceptionHandler(Exception.class)

@@ -9,6 +9,8 @@ public enum RestErrorDefinitionEnum {
 
     TYPE_MISMATCH("VALIDATION-001", "Parameter '%s' must be of type '%s', got '%s'"),
     MISSING_PARAMETER("VALIDATION-002", "Required parameter '%s' of type '%s' is missing"),
+    MALFORMED_REQUEST_BODY("VALIDATION-003", "Request body is missing or malformed"),
+    INVALID_CREDENTIALS("AUTH-001", "Invalid username or password"),
     INTERNAL_ERROR("INTERNAL-001", "An unexpected error occurred");
 
     private final String code;
