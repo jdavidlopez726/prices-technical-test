@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="002-01-load-roles-data" author="josed">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM roles</sqlCheck>
+        </preConditions>
+
+        <insert tableName="roles">
+            <column name="role_name" value="USER"/>
+        </insert>
+        <insert tableName="roles">
+            <column name="role_name" value="ADMIN"/>
+        </insert>
+
+        <rollback>
+            <delete tableName="roles">
+                <where>role_name IN ('USER', 'ADMIN')</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <!--
+        Demo users. Passwords are stored as BCrypt hashes; the plain-text demo passwords are documented in the README.
+    -->
+    <changeSet id="002-02-load-users-data" author="josed">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM users</sqlCheck>
+        </preConditions>
+
+        <insert tableName="users">
+            <column name="username" value="user"/>
+            <column name="password" value="{bcrypt}$2a$10$0qeLtHaBCOszL/FqHn34S.vqVA9YdQqWMam2LQJyaJzc4ulQ.QSx."/>
+            <column name="enabled" valueBoolean="true"/>
+            <column name="role_id" valueComputed="(SELECT role_id FROM roles WHERE role_name = 'USER')"/>
+        </insert>
+        <insert tableName="users">
+            <column name="username" value="admin"/>
+            <column name="password" value="{bcrypt}$2a$10$td/iRN5n85QMMevenkFDOOklP1Z8aLny3jIjCST6pNpwd.Odz3h6a"/>
+            <column name="enabled" valueBoolean="true"/>
+            <column name="role_id" valueComputed="(SELECT role_id FROM roles WHERE role_name = 'ADMIN')"/>
+        </insert>
+
+        <rollback>
+            <delete tableName="users">
+                <where>username IN ('user', 'admin')</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>
