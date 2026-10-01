@@ -11,6 +11,8 @@ public enum RestErrorDefinitionEnum {
     MISSING_PARAMETER("VALIDATION-002", "Required parameter '%s' of type '%s' is missing"),
     MALFORMED_REQUEST_BODY("VALIDATION-003", "Request body is missing or malformed"),
     INVALID_CREDENTIALS("AUTH-001", "Invalid username or password"),
+    INVALID_TOKEN("AUTH-002", "Access token is missing, invalid or expired"),
+    ACCESS_DENIED("AUTH-003", "You do not have permission to access this resource"),
     INTERNAL_ERROR("INTERNAL-001", "An unexpected error occurred");
 
     private final String code;

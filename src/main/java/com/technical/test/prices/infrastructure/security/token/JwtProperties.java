@@ -1,4 +1,4 @@
-package com.technical.test.prices.infrastructure.security.config;
+package com.technical.test.prices.infrastructure.security.token;
 
 import java.time.Duration;
 import java.util.Objects;

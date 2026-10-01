@@ -1,4 +1,4 @@
-package com.technical.test.prices.infrastructure.security.config;
+package com.technical.test.prices.infrastructure.security.token;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;

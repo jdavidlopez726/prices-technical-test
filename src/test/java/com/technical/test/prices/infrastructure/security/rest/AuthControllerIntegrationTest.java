@@ -2,6 +2,7 @@ package com.technical.test.prices.infrastructure.security.rest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -13,6 +14,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -91,13 +93,57 @@ class AuthControllerIntegrationTest {
                 .andExpect(jsonPath("$.code").value("VALIDATION-003"));
     }
 
+    @Test
+    void givenTokenFromUserLogin_whenGetPrices_thenReturnsSuccess() throws Exception {
+        getPrices(accessToken("user", "user"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.price.amount").value(35.50));
+    }
+
+    @Test
+    void givenTokenFromAdminLogin_whenGetPrices_thenReturnsSuccess() throws Exception {
+        getPrices(accessToken("admin", "admin"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.price.amount").value(35.50));
+    }
+
+    @Test
+    void givenTamperedToken_whenGetPrices_thenReturnsUnauthorized() throws Exception {
+        String token = accessToken("user", "user");
+        String tamperedToken = token.substring(0, token.length() - 4) + "AAAA";
+
+        getPrices(tamperedToken)
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.status").value(401))
+                .andExpect(jsonPath("$.code").value("AUTH-002"));
+    }
+
+    @Test
+    void givenMalformedToken_whenGetPrices_thenReturnsUnauthorized() throws Exception {
+        getPrices("not-a-jwt")
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.code").value("AUTH-002"));
+    }
+
     /**
      * Decodes the token without verifying its signature: only the claims written by the login are checked here.
      */
     private JWTClaimsSet loginClaims(String username, String password) throws Exception {
+        return SignedJWT.parse(accessToken(username, password)).getJWTClaimsSet();
+    }
+
+    private String accessToken(String username, String password) throws Exception {
         String response = login(username, password)
                 .andReturn().getResponse().getContentAsString();
-        return SignedJWT.parse(JsonPath.read(response, "$.accessToken")).getJWTClaimsSet();
+        return JsonPath.read(response, "$.accessToken");
+    }
+
+    private ResultActions getPrices(String token) throws Exception {
+        return mockMvc.perform(get("/prices")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                .param("date", "2020-06-14T10:00:00")
+                .param("productId", "35455")
+                .param("brandId", "1"));
     }
 
     private ResultActions login(String username, String password) throws Exception {

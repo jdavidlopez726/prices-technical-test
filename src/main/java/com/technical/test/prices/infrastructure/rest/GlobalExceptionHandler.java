@@ -7,9 +7,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AccountStatusException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -77,6 +80,33 @@ public class GlobalExceptionHandler {
                         RestErrorDefinitionEnum.INVALID_CREDENTIALS.getMessageTemplate(),
                         status.value(),
                         RestErrorDefinitionEnum.INVALID_CREDENTIALS.getCode()));
+    }
+
+    /**
+     * Request to a protected endpoint without a token, or with one that is not valid or has expired.
+     */
+    @ExceptionHandler({InsufficientAuthenticationException.class, OAuth2AuthenticationException.class})
+    public ResponseEntity<ErrorResponse> handleInvalidToken(AuthenticationException ex) {
+        HttpStatus status = HttpStatus.UNAUTHORIZED;
+        log.debug("Token rejected: {}", ex.getMessage());
+        return ResponseEntity.status(status)
+                .body(new ErrorResponse(
+                        RestErrorDefinitionEnum.INVALID_TOKEN.getMessageTemplate(),
+                        status.value(),
+                        RestErrorDefinitionEnum.INVALID_TOKEN.getCode()));
+    }
+
+    /**
+     * The token is valid, but the user does not have the role the endpoint requires.
+     */
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleAccessDenied(AccessDeniedException ex) {
+        HttpStatus status = HttpStatus.FORBIDDEN;
+        return ResponseEntity.status(status)
+                .body(new ErrorResponse(
+                        RestErrorDefinitionEnum.ACCESS_DENIED.getMessageTemplate(),
+                        status.value(),
+                        RestErrorDefinitionEnum.ACCESS_DENIED.getCode()));
     }
 
     @ExceptionHandler(Exception.class)
