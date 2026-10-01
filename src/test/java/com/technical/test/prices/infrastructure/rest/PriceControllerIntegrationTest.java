@@ -18,6 +18,7 @@ import static org.hamcrest.Matchers.startsWith;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -198,6 +199,25 @@ class PriceControllerIntegrationTest {
         mockMvc.perform(validPriceRequest().with(tokenWithRole(Roles.ADMIN)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.priceList").value(1));
+    }
+
+    @Test
+    void givenUnknownPath_whenRequested_thenReturnsNotFound() throws Exception {
+        mockMvc.perform(get("/unknown").with(tokenWithRole(Roles.USER)))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.status").value(404))
+                .andExpect(jsonPath("$.code").value("HTTP-001"))
+                .andExpect(jsonPath("$.detail").value("No endpoint found for '/unknown'"));
+    }
+
+    @Test
+    void givenUnsupportedMethod_whenPostPrices_thenReturnsMethodNotAllowed() throws Exception {
+        mockMvc.perform(post("/prices").with(tokenWithRole(Roles.USER)))
+                .andExpect(status().isMethodNotAllowed())
+                .andExpect(header().string(HttpHeaders.ALLOW, "GET"))
+                .andExpect(jsonPath("$.status").value(405))
+                .andExpect(jsonPath("$.code").value("HTTP-002"))
+                .andExpect(jsonPath("$.detail").value("Method 'POST' is not supported for this endpoint"));
     }
 
     private static MockHttpServletRequestBuilder validPriceRequest() {

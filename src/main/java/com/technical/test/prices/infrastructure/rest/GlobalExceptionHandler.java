@@ -4,6 +4,7 @@ import com.technical.test.prices.domain.exception.NotFoundException;
 import com.technical.test.prices.infrastructure.rest.constant.RestErrorDefinitionEnum;
 import com.technical.test.prices.infrastructure.rest.dto.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -13,12 +14,15 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.Optional;
+import java.util.Set;
 
 @Slf4j
 @RestControllerAdvice
@@ -32,6 +36,36 @@ public class GlobalExceptionHandler {
                         ex.getMessage(),
                         status.value(),
                         ex.getError().getCode()));
+    }
+
+    /**
+     * No controller matches the path. Spring then looks for a static resource and throws this exception, which
+     * would otherwise end up in the generic handler as a 500.
+     */
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<ErrorResponse> handleResourceNotFound(NoResourceFoundException ex) {
+        HttpStatus status = HttpStatus.NOT_FOUND;
+        return ResponseEntity.status(status)
+                .body(new ErrorResponse(
+                        RestErrorDefinitionEnum.RESOURCE_NOT_FOUND.format("/" + ex.getResourcePath()),
+                        status.value(),
+                        RestErrorDefinitionEnum.RESOURCE_NOT_FOUND.getCode()));
+    }
+
+    /**
+     * The path exists, but not for this HTTP method. The {@code Allow} header lists the supported ones.
+     */
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<ErrorResponse> handleMethodNotAllowed(HttpRequestMethodNotSupportedException ex) {
+        HttpStatus status = HttpStatus.METHOD_NOT_ALLOWED;
+        Set<HttpMethod> supportedMethods = ex.getSupportedHttpMethods();
+        HttpMethod[] allowedMethods = supportedMethods != null ? supportedMethods.toArray(HttpMethod[]::new) : new HttpMethod[0];
+        return ResponseEntity.status(status)
+                .allow(allowedMethods)
+                .body(new ErrorResponse(
+                        RestErrorDefinitionEnum.METHOD_NOT_ALLOWED.format(ex.getMethod()),
+                        status.value(),
+                        RestErrorDefinitionEnum.METHOD_NOT_ALLOWED.getCode()));
     }
 
     @ExceptionHandler(MissingServletRequestParameterException.class)
