@@ -185,8 +185,8 @@ class PriceControllerIntegrationTest {
     }
 
     @Test
-    void givenTokenWithoutUserRole_whenGetApplicablePrices_thenReturnsForbidden() throws Exception {
-        mockMvc.perform(validPriceRequest().with(tokenWithRole("OTHER")))
+    void givenGuestToken_whenGetApplicablePrices_thenReturnsForbidden() throws Exception {
+        mockMvc.perform(validPriceRequest().with(tokenWithRole(Roles.GUEST)))
                 .andExpect(status().isForbidden())
                 .andExpect(jsonPath("$.status").value(403))
                 .andExpect(jsonPath("$.code").value("AUTH-003"))

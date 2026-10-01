@@ -51,5 +51,40 @@
             </delete>
         </rollback>
     </changeSet>
+    
+    <changeSet id="002-03-load-guest-role-data" author="josed">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM roles WHERE role_name = 'GUEST'</sqlCheck>
+        </preConditions>
+
+        <insert tableName="roles">
+            <column name="role_name" value="GUEST"/>
+        </insert>
+
+        <rollback>
+            <delete tableName="roles">
+                <where>role_name = 'GUEST'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="002-04-load-guest-user-data" author="josed">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM users WHERE username = 'guest'</sqlCheck>
+        </preConditions>
+
+        <insert tableName="users">
+            <column name="username" value="guest"/>
+            <column name="password" value="{bcrypt}$2a$10$vWvryB3wxUY71kogo8m2GO/6NRjX8ko10f./SDek/hNUZAO0srKQy"/>
+            <column name="enabled" valueBoolean="true"/>
+            <column name="role_id" valueComputed="(SELECT role_id FROM roles WHERE role_name = 'GUEST')"/>
+        </insert>
+
+        <rollback>
+            <delete tableName="users">
+                <where>username = 'guest'</where>
+            </delete>
+        </rollback>
+    </changeSet>
 
 </databaseChangeLog>

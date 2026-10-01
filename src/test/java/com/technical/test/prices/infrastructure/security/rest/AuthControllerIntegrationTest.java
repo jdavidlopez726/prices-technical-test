@@ -66,6 +66,14 @@ class AuthControllerIntegrationTest {
     }
 
     @Test
+    void givenGuestCredentials_whenLogin_thenTokenContainsGuestRole() throws Exception {
+        JWTClaimsSet claims = loginClaims("guest", "guest");
+
+        assertThat(claims.getSubject()).isEqualTo("guest");
+        assertThat(claims.getStringListClaim("roles")).containsExactly("GUEST");
+    }
+
+    @Test
     void givenWrongPassword_whenLogin_thenReturnsUnauthorized() throws Exception {
         login("user", "wrong-password")
                 .andExpect(status().isUnauthorized())
@@ -105,6 +113,14 @@ class AuthControllerIntegrationTest {
         getPrices(accessToken("admin", "admin"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.price.amount").value(35.50));
+    }
+
+    @Test
+    void givenTokenFromGuestLogin_whenGetPrices_thenReturnsForbidden() throws Exception {
+        getPrices(accessToken("guest", "guest"))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.status").value(403))
+                .andExpect(jsonPath("$.code").value("AUTH-003"));
     }
 
     @Test

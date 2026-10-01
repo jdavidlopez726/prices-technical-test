@@ -48,12 +48,14 @@ public class SecurityConfig {
     }
 
     /**
-     * An admin can do everything a user can: {@code hasRole('USER')} is also granted to {@code ADMIN}.
+     * {@code ADMIN > USER > GUEST}: each role can do everything the roles below it can. For example,
+     * {@code hasRole('USER')} is also granted to {@code ADMIN}, and {@code hasRole('GUEST')} to all three.
      */
     @Bean
     public RoleHierarchy roleHierarchy() {
         return RoleHierarchyImpl.withDefaultRolePrefix()
                 .role(Roles.ADMIN).implies(Roles.USER)
+                .role(Roles.USER).implies(Roles.GUEST)
                 .build();
     }
 }
