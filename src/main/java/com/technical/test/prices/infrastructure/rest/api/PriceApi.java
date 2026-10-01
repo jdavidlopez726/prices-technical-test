@@ -25,6 +25,10 @@ public interface PriceApi {
             content = @Content(schema = @Schema(implementation = PriceResponse.class)))
     @ApiResponse(responseCode = "404", description = "No applicable price found",
             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    @ApiResponse(responseCode = "401", description = "Access token is missing, invalid or expired",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    @ApiResponse(responseCode = "403", description = "The user does not have the USER role",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     @GetMapping
     ResponseEntity<PriceResponse> getApplicablePrice(
             @Parameter(description = "Application date", example = "2020-06-14T10:00:00")

@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,6 +23,7 @@ public interface AuthApi {
             content = @Content(schema = @Schema(implementation = TokenResponse.class)))
     @ApiResponse(responseCode = "400", description = "Missing or malformed request body")
     @ApiResponse(responseCode = "401", description = "Invalid credentials")
+    @SecurityRequirements // Public endpoint: no token required
     @PostMapping("/login")
     ResponseEntity<TokenResponse> login(@RequestBody LoginRequest request);
 }

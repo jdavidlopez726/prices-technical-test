@@ -1,10 +1,11 @@
 package com.technical.test.prices.infrastructure.security.rest.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.jspecify.annotations.NonNull;
 
 public record LoginRequest(
-        String username,
-        String password
+        @Schema(example = "user") String username,
+        @Schema(example = "user") String password
 ) {
 
     /**
