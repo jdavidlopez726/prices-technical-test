@@ -4,14 +4,25 @@ import com.technical.test.prices.domain.exception.NotFoundException;
 import com.technical.test.prices.infrastructure.rest.constant.RestErrorDefinitionEnum;
 import com.technical.test.prices.infrastructure.rest.dto.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.AccountStatusException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.Optional;
+import java.util.Set;
 
 @Slf4j
 @RestControllerAdvice
@@ -25,6 +36,36 @@ public class GlobalExceptionHandler {
                         ex.getMessage(),
                         status.value(),
                         ex.getError().getCode()));
+    }
+
+    /**
+     * No controller matches the path. Spring then looks for a static resource and throws this exception, which
+     * would otherwise end up in the generic handler as a 500.
+     */
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<ErrorResponse> handleResourceNotFound(NoResourceFoundException ex) {
+        HttpStatus status = HttpStatus.NOT_FOUND;
+        return ResponseEntity.status(status)
+                .body(new ErrorResponse(
+                        RestErrorDefinitionEnum.RESOURCE_NOT_FOUND.format("/" + ex.getResourcePath()),
+                        status.value(),
+                        RestErrorDefinitionEnum.RESOURCE_NOT_FOUND.getCode()));
+    }
+
+    /**
+     * The path exists, but not for this HTTP method. The {@code Allow} header lists the supported ones.
+     */
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<ErrorResponse> handleMethodNotAllowed(HttpRequestMethodNotSupportedException ex) {
+        HttpStatus status = HttpStatus.METHOD_NOT_ALLOWED;
+        Set<HttpMethod> supportedMethods = ex.getSupportedHttpMethods();
+        HttpMethod[] allowedMethods = supportedMethods != null ? supportedMethods.toArray(HttpMethod[]::new) : new HttpMethod[0];
+        return ResponseEntity.status(status)
+                .allow(allowedMethods)
+                .body(new ErrorResponse(
+                        RestErrorDefinitionEnum.METHOD_NOT_ALLOWED.format(ex.getMethod()),
+                        status.value(),
+                        RestErrorDefinitionEnum.METHOD_NOT_ALLOWED.getCode()));
     }
 
     @ExceptionHandler(MissingServletRequestParameterException.class)
@@ -48,6 +89,58 @@ public class GlobalExceptionHandler {
                         RestErrorDefinitionEnum.TYPE_MISMATCH.format(ex.getName(), expectedType, ex.getValue()),
                         status.value(),
                         RestErrorDefinitionEnum.TYPE_MISMATCH.getCode()));
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ErrorResponse> handleMalformedRequestBody(HttpMessageNotReadableException ex) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        return ResponseEntity.status(status)
+                .body(new ErrorResponse(
+                        RestErrorDefinitionEnum.MALFORMED_REQUEST_BODY.getMessageTemplate(),
+                        status.value(),
+                        RestErrorDefinitionEnum.MALFORMED_REQUEST_BODY.getCode()));
+    }
+
+    /**
+     * Failed login. Unknown user, wrong password and disabled account all return the same message on purpose,
+     * so the response does not reveal which usernames exist.
+     */
+    @ExceptionHandler({BadCredentialsException.class, AccountStatusException.class})
+    public ResponseEntity<ErrorResponse> handleInvalidCredentials(AuthenticationException ex) {
+        HttpStatus status = HttpStatus.UNAUTHORIZED;
+        log.debug("Login failed: {}", ex.getMessage());
+        return ResponseEntity.status(status)
+                .body(new ErrorResponse(
+                        RestErrorDefinitionEnum.INVALID_CREDENTIALS.getMessageTemplate(),
+                        status.value(),
+                        RestErrorDefinitionEnum.INVALID_CREDENTIALS.getCode()));
+    }
+
+    /**
+     * Request to a protected endpoint without a token, or with one that is not valid or has expired.
+     */
+    @ExceptionHandler({InsufficientAuthenticationException.class, OAuth2AuthenticationException.class})
+    public ResponseEntity<ErrorResponse> handleInvalidToken(AuthenticationException ex) {
+        HttpStatus status = HttpStatus.UNAUTHORIZED;
+        log.debug("Token rejected: {}", ex.getMessage());
+        return ResponseEntity.status(status)
+                .body(new ErrorResponse(
+                        RestErrorDefinitionEnum.INVALID_TOKEN.getMessageTemplate(),
+                        status.value(),
+                        RestErrorDefinitionEnum.INVALID_TOKEN.getCode()));
+    }
+
+    /**
+     * The token is valid, but the user does not have the role the endpoint requires.
+     */
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleAccessDenied(AccessDeniedException ex) {
+        HttpStatus status = HttpStatus.FORBIDDEN;
+        return ResponseEntity.status(status)
+                .body(new ErrorResponse(
+                        RestErrorDefinitionEnum.ACCESS_DENIED.getMessageTemplate(),
+                        status.value(),
+                        RestErrorDefinitionEnum.ACCESS_DENIED.getCode()));
     }
 
     @ExceptionHandler(Exception.class)
