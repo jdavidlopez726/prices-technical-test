@@ -9,6 +9,12 @@ public enum RestErrorDefinitionEnum {
 
     TYPE_MISMATCH("VALIDATION-001", "Parameter '%s' must be of type '%s', got '%s'"),
     MISSING_PARAMETER("VALIDATION-002", "Required parameter '%s' of type '%s' is missing"),
+    MALFORMED_REQUEST_BODY("VALIDATION-003", "Request body is missing or malformed"),
+    INVALID_CREDENTIALS("AUTH-001", "Invalid username or password"),
+    INVALID_TOKEN("AUTH-002", "Access token is missing, invalid or expired"),
+    ACCESS_DENIED("AUTH-003", "You do not have permission to access this resource"),
+    RESOURCE_NOT_FOUND("HTTP-001", "No endpoint found for '%s'"),
+    METHOD_NOT_ALLOWED("HTTP-002", "Method '%s' is not supported for this endpoint"),
     INTERNAL_ERROR("INTERNAL-001", "An unexpected error occurred");
 
     private final String code;

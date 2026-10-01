@@ -18,7 +18,8 @@ class ArchitectureTest {
             .applicationServices("..application..")
             .adapter("rest", "..infrastructure.rest..")
             .adapter("persistence", "..infrastructure.persistence..")
-            .adapter("config", "..infrastructure.config..");
+            .adapter("config", "..infrastructure.config..")
+            .adapter("security", "..infrastructure.security..");
 
     @ArchTest
     static final ArchRule coreIsFrameworkFree = noClasses()
