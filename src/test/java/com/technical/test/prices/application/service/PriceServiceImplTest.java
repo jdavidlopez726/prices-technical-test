@@ -43,18 +43,18 @@ class PriceServiceImplTest {
     void givenCandidatePrices_whenFindApplicablePrice_thenReturnsSelectedPrice() {
         Price basePrice = price(1L, 0, "2020-06-14T00:00:00", "2020-12-31T23:59:59");
         Price promoPrice = price(2L, 1, "2020-06-14T15:00:00", "2020-06-14T18:30:00");
-        when(priceRepository.findCandidatePrices(BRAND_ID, PRODUCT_ID, APPLICATION_DATE))
+        when(priceRepository.findPricesApplicableAt(BRAND_ID, PRODUCT_ID, APPLICATION_DATE))
                 .thenReturn(List.of(basePrice, promoPrice));
 
         Price result = priceService.findApplicablePrice(BRAND_ID, PRODUCT_ID, APPLICATION_DATE);
 
         assertThat(result).isEqualTo(promoPrice);
-        verify(priceRepository).findCandidatePrices(BRAND_ID, PRODUCT_ID, APPLICATION_DATE);
+        verify(priceRepository).findPricesApplicableAt(BRAND_ID, PRODUCT_ID, APPLICATION_DATE);
     }
 
     @Test
     void givenNoCandidatePrices_whenFindApplicablePrice_thenThrowsNotFound() {
-        when(priceRepository.findCandidatePrices(BRAND_ID, PRODUCT_ID, APPLICATION_DATE))
+        when(priceRepository.findPricesApplicableAt(BRAND_ID, PRODUCT_ID, APPLICATION_DATE))
                 .thenReturn(List.of());
 
         assertThatThrownBy(() -> priceService.findApplicablePrice(BRAND_ID, PRODUCT_ID, APPLICATION_DATE))
@@ -66,7 +66,7 @@ class PriceServiceImplTest {
     @Test
     void givenOnlyNonApplicableCandidates_whenFindApplicablePrice_thenThrowsNotFound() {
         Price futurePrice = price(1L, 0, "2020-06-15T00:00:00", "2020-12-31T23:59:59");
-        when(priceRepository.findCandidatePrices(BRAND_ID, PRODUCT_ID, APPLICATION_DATE))
+        when(priceRepository.findPricesApplicableAt(BRAND_ID, PRODUCT_ID, APPLICATION_DATE))
                 .thenReturn(List.of(futurePrice));
 
         assertThatThrownBy(() -> priceService.findApplicablePrice(BRAND_ID, PRODUCT_ID, APPLICATION_DATE))

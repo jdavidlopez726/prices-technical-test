@@ -12,8 +12,8 @@ import org.springframework.data.repository.query.Param;
 
 public interface JpaPriceRepository extends JpaRepository<PriceEntity, Long> {
 
-    @Query(value = PriceQueries.FIND_CANDIDATE_PRICES, nativeQuery = true)
-    List<PriceEntity> findCandidatePrices(@Param(PriceQueryParams.BRAND_ID) Long brandId,
+    @Query(value = PriceQueries.FIND_PRICES_APPLICABLE_AT, nativeQuery = true)
+    List<PriceEntity> findPricesApplicableAt(@Param(PriceQueryParams.BRAND_ID) Long brandId,
                                           @Param(PriceQueryParams.PRODUCT_ID) Long productId,
                                           @Param(PriceQueryParams.APPLICATION_DATE) LocalDateTime applicationDate);
 }

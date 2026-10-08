@@ -26,7 +26,7 @@ public class PriceServiceImpl implements PriceServicePort {
                 PriceServiceLogs.RETRIEVE_PRICE_REQUEST.formatted(brandId.value(), productId.value(), applicationDate));
 
         //Obtain candidate prices
-        List<Price> candidates = priceRepository.findCandidatePrices(brandId, productId, applicationDate);
+        List<Price> candidates = priceRepository.findPricesApplicableAt(brandId, productId, applicationDate);
 
         //Select price from candidate prices
         Price price = applicablePriceSelector.select(candidates, applicationDate)

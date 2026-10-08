@@ -20,8 +20,8 @@ public class PriceRepositoryAdapter implements PriceRepositoryPort {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Price> findCandidatePrices(BrandId brandId, ProductId productId, LocalDateTime applicationDate) {
+    public List<Price> findPricesApplicableAt(BrandId brandId, ProductId productId, LocalDateTime applicationDate) {
         return priceEntityMapper.toDomain(
-                jpaPriceRepository.findCandidatePrices(brandId.value(), productId.value(), applicationDate));
+                jpaPriceRepository.findPricesApplicableAt(brandId.value(), productId.value(), applicationDate));
     }
 }
