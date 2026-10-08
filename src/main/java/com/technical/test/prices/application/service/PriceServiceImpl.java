@@ -29,7 +29,7 @@ public class PriceServiceImpl implements PriceServicePort {
         List<Price> candidates = priceRepository.findPricesApplicableAt(brandId, productId, applicationDate);
 
         //Select price from candidate prices
-        Price price = applicablePriceSelector.select(candidates, applicationDate)
+        Price price = applicablePriceSelector.select(candidates)
                 .orElseThrow(() -> new NotFoundException(
                         DomainErrorDefinitionEnum.PRICE_NOT_FOUND, brandId.value(), productId.value(), applicationDate));
 

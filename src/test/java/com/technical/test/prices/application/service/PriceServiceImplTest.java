@@ -63,17 +63,6 @@ class PriceServiceImplTest {
                 .isEqualTo(DomainErrorDefinitionEnum.PRICE_NOT_FOUND);
     }
 
-    @Test
-    void givenOnlyNonApplicableCandidates_whenFindApplicablePrice_thenThrowsNotFound() {
-        Price futurePrice = price(1L, 0, "2020-06-15T00:00:00", "2020-12-31T23:59:59");
-        when(priceRepository.findPricesApplicableAt(BRAND_ID, PRODUCT_ID, APPLICATION_DATE))
-                .thenReturn(List.of(futurePrice));
-
-        assertThatThrownBy(() -> priceService.findApplicablePrice(BRAND_ID, PRODUCT_ID, APPLICATION_DATE))
-                .isInstanceOf(NotFoundException.class)
-                .hasMessage("No applicable price found for brandId=1, productId=35455, date=2020-06-14T16:00");
-    }
-
     private Price price(Long priceList, int priority, String startDate, String endDate) {
         return new Price(BRAND_ID, PRODUCT_ID, priceList, LocalDateTime.parse(startDate), LocalDateTime.parse(endDate),
                 priority, Money.of(BigDecimal.TEN, "EUR"));
