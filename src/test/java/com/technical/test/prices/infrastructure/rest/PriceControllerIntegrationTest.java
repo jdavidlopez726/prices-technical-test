@@ -3,6 +3,8 @@ package com.technical.test.prices.infrastructure.rest;
 import com.technical.test.prices.application.security.Roles;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
@@ -132,6 +134,25 @@ class PriceControllerIntegrationTest {
                 .andExpect(jsonPath("$.endDate").value("2020-12-31T23:59:59"))
                 .andExpect(jsonPath("$.price.amount").value(38.95))
                 .andExpect(jsonPath("$.price.currency").value("EUR"));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "2020-06-14T15:00:00, 2",
+            "2020-06-14T18:30:00, 2",
+            "2020-06-14T14:59:59, 1",
+            "2020-06-14T18:30:01, 1"
+    })
+    void givenDateOnRangeBoundary_whenGetApplicablePrices_thenAppliesInclusiveRange(String date, long expectedPriceList)
+            throws Exception {
+        mockMvc.perform(get("/prices")
+                        .with(tokenWithRole(Roles.USER))
+                        .param("date", date)
+                        .param("productId", "35455")
+                        .param("brandId", "1")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.priceList").value(expectedPriceList));
     }
 
     @Test

@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface PriceRepositoryPort {
 
-    List<Price> findCandidatePrices(BrandId brandId, ProductId productId, LocalDateTime applicationDate);
+    List<Price> findPricesApplicableAt(BrandId brandId, ProductId productId, LocalDateTime applicationDate);
 }
