@@ -155,7 +155,7 @@ db/changelog/
 └── v2.0/  users and roles tables, and the demo users
 ```
 
-Sample prices, for brand `1` (ZARA) and product `35455`:
+Sample prices, for brand `1` (BRAND_1) and product `35455`:
 
 | Price list | From | To | Priority | Price |
 |---|---|---|---|---|
