@@ -29,7 +29,7 @@
 
         <insert tableName="brands">
             <column name="brand_id" valueNumeric="1"/>
-            <column name="name" value="ZARA"/>
+            <column name="name" value="BRAND_1"/>
         </insert>
 
         <rollback>
