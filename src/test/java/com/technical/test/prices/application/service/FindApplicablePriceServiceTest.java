@@ -23,7 +23,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class PriceServiceImplTest {
+class FindApplicablePriceServiceTest {
 
     private static final BrandId BRAND_ID = new BrandId(1L);
     private static final ProductId PRODUCT_ID = new ProductId(35455L);
@@ -32,11 +32,11 @@ class PriceServiceImplTest {
     @Mock
     private PriceRepositoryPort priceRepository;
 
-    private PriceServiceImpl priceService;
+    private FindApplicablePriceService findApplicablePriceService;
 
     @BeforeEach
     void setup() {
-        priceService = new PriceServiceImpl(priceRepository, new ApplicablePriceSelector());
+        findApplicablePriceService = new FindApplicablePriceService(priceRepository, new ApplicablePriceSelector());
     }
 
     @Test
@@ -46,7 +46,7 @@ class PriceServiceImplTest {
         when(priceRepository.findPricesApplicableAt(BRAND_ID, PRODUCT_ID, APPLICATION_DATE))
                 .thenReturn(List.of(basePrice, promoPrice));
 
-        Price result = priceService.findApplicablePrice(BRAND_ID, PRODUCT_ID, APPLICATION_DATE);
+        Price result = findApplicablePriceService.findApplicablePrice(BRAND_ID, PRODUCT_ID, APPLICATION_DATE);
 
         assertThat(result).isEqualTo(promoPrice);
         verify(priceRepository).findPricesApplicableAt(BRAND_ID, PRODUCT_ID, APPLICATION_DATE);
@@ -57,7 +57,7 @@ class PriceServiceImplTest {
         when(priceRepository.findPricesApplicableAt(BRAND_ID, PRODUCT_ID, APPLICATION_DATE))
                 .thenReturn(List.of());
 
-        assertThatThrownBy(() -> priceService.findApplicablePrice(BRAND_ID, PRODUCT_ID, APPLICATION_DATE))
+        assertThatThrownBy(() -> findApplicablePriceService.findApplicablePrice(BRAND_ID, PRODUCT_ID, APPLICATION_DATE))
                 .isInstanceOf(NotFoundException.class)
                 .extracting(ex -> ((NotFoundException) ex).getError())
                 .isEqualTo(DomainErrorDefinitionEnum.PRICE_NOT_FOUND);

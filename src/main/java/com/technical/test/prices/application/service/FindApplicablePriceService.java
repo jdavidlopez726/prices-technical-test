@@ -1,6 +1,6 @@
 package com.technical.test.prices.application.service;
 
-import com.technical.test.prices.application.service.constant.PriceServiceLogs;
+import com.technical.test.prices.application.service.constant.FindApplicablePriceServiceLogs;
 import com.technical.test.prices.domain.exception.DomainErrorDefinitionEnum;
 import com.technical.test.prices.domain.exception.NotFoundException;
 import com.technical.test.prices.domain.model.BrandId;
@@ -15,15 +15,17 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RequiredArgsConstructor
-public class PriceServiceImpl implements PriceServicePort {
+public class FindApplicablePriceService implements FindApplicablePriceUseCase {
 
     private final PriceRepositoryPort priceRepository;
     private final ApplicablePriceSelector applicablePriceSelector;
 
     @Override
     public Price findApplicablePrice(BrandId brandId, ProductId productId, LocalDateTime applicationDate) {
-        log.info(PriceServiceLogs.BASE_LOG, PriceServiceLogs.PRICE_SERVICE_CLASS, PriceServiceLogs.RETRIEVE_PRICE_METHOD,
-                PriceServiceLogs.RETRIEVE_PRICE_REQUEST.formatted(brandId.value(), productId.value(), applicationDate));
+        log.info(FindApplicablePriceServiceLogs.BASE_LOG,
+                FindApplicablePriceServiceLogs.SERVICE_CLASS,
+                FindApplicablePriceServiceLogs.RETRIEVE_PRICE_METHOD,
+                FindApplicablePriceServiceLogs.RETRIEVE_PRICE_REQUEST.formatted(brandId.value(), productId.value(), applicationDate));
 
         //Obtain candidate prices
         List<Price> candidates = priceRepository.findPricesApplicableAt(brandId, productId, applicationDate);
@@ -33,11 +35,17 @@ public class PriceServiceImpl implements PriceServicePort {
                 .orElseThrow(() -> new NotFoundException(
                         DomainErrorDefinitionEnum.PRICE_NOT_FOUND, brandId.value(), productId.value(), applicationDate));
 
-        log.debug(PriceServiceLogs.BASE_LOG, PriceServiceLogs.PRICE_SERVICE_CLASS, PriceServiceLogs.RETRIEVE_PRICE_METHOD,
-                PriceServiceLogs.RETRIEVE_PRICE_FOUND.formatted(brandId.value(), productId.value(), applicationDate));
+        log.debug(FindApplicablePriceServiceLogs.BASE_LOG,
+                FindApplicablePriceServiceLogs.SERVICE_CLASS,
+                FindApplicablePriceServiceLogs.RETRIEVE_PRICE_METHOD,
+                FindApplicablePriceServiceLogs.RETRIEVE_PRICE_FOUND.formatted(brandId.value(), productId.value(), applicationDate));
 
-        log.info(PriceServiceLogs.BASE_LOG, PriceServiceLogs.PRICE_SERVICE_CLASS, PriceServiceLogs.RETRIEVE_PRICE_METHOD,
-                PriceServiceLogs.RETRIEVE_PRICE_RESPONSE.formatted(brandId.value(), productId.value(), applicationDate));
+        log.info(FindApplicablePriceServiceLogs.BASE_LOG,
+                FindApplicablePriceServiceLogs.SERVICE_CLASS,
+                FindApplicablePriceServiceLogs.RETRIEVE_PRICE_METHOD,
+                FindApplicablePriceServiceLogs.RETRIEVE_PRICE_RESPONSE.formatted(brandId.value(), productId.value(), applicationDate));
         return price;
     }
 }
+
+

@@ -1,7 +1,7 @@
 package com.technical.test.prices.infrastructure.config;
 
-import com.technical.test.prices.application.service.PriceServiceImpl;
-import com.technical.test.prices.application.service.PriceServicePort;
+import com.technical.test.prices.application.service.FindApplicablePriceService;
+import com.technical.test.prices.application.service.FindApplicablePriceUseCase;
 import com.technical.test.prices.domain.repository.PriceRepositoryPort;
 import com.technical.test.prices.domain.service.ApplicablePriceSelector;
 import org.springframework.context.annotation.Bean;
@@ -18,8 +18,8 @@ import org.springframework.context.annotation.Configuration;
 public class ApplicationConfig {
 
     @Bean
-    public PriceServicePort priceService(PriceRepositoryPort priceRepository,
-                                         ApplicablePriceSelector applicablePriceSelector) {
-        return new PriceServiceImpl(priceRepository, applicablePriceSelector);
+    public FindApplicablePriceUseCase findApplicablePriceUseCase(PriceRepositoryPort priceRepository,
+                                                                 ApplicablePriceSelector applicablePriceSelector) {
+        return new FindApplicablePriceService(priceRepository, applicablePriceSelector);
     }
 }
