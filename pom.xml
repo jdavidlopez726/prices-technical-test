@@ -10,21 +10,25 @@
 	</parent>
 	<groupId>com.technical.test</groupId>
 	<artifactId>prices</artifactId>
-	<version>2.0.0</version>
-	<name/>
-	<description/>
-	<url/>
+	<version>2.0.1</version>
+	<name>Prices Service</name>
+	<description>REST API that returns the price that applies to a product of a brand at a given date and time</description>
+	<url>https://github.com/jdavidlopez726/prices-technical-test</url>
+	<!-- Empty on purpose: no license, instead of the Apache 2.0 license inherited from spring-boot-starter-parent -->
 	<licenses>
 		<license/>
 	</licenses>
 	<developers>
-		<developer/>
+		<developer>
+			<id>jdavidlopez726</id>
+			<url>https://github.com/jdavidlopez726</url>
+		</developer>
 	</developers>
 	<scm>
-		<connection/>
-		<developerConnection/>
-		<tag/>
-		<url/>
+		<connection>scm:git:https://github.com/jdavidlopez726/prices-technical-test.git</connection>
+		<developerConnection>scm:git:git@github.com:jdavidlopez726/prices-technical-test.git</developerConnection>
+		<url>https://github.com/jdavidlopez726/prices-technical-test</url>
+		<tag>HEAD</tag>
 	</scm>
 	<properties>
 		<java.version>21</java.version>
@@ -77,6 +81,11 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa-test</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

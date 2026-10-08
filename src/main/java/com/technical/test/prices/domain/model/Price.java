@@ -11,8 +11,4 @@ public record Price(
         Integer priority,
         Money price
 ) {
-
-    public boolean isApplicableAt(LocalDateTime date) {
-        return !date.isBefore(startDate) && !date.isAfter(endDate);
-    }
 }

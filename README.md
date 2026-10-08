@@ -19,6 +19,15 @@ Authorization: Bearer <token>
 }
 ```
 
+The endpoint requires an access token, so a request without one returns `401 Unauthorized`. With the application [running](#getting-started), this logs in as the demo `user` and queries the price in one go, from a Bash shell:
+
+```bash
+TOKEN=$(curl -s -X POST http://localhost:8080/auth/login -H "Content-Type: application/json" \
+        -d '{"username": "user", "password": "user"}' | sed -E 's/.*"accessToken":"([^"]+)".*/\1/')
+curl "http://localhost:8080/prices?date=2020-06-14T16:00:00&productId=35455&brandId=1" \
+     -H "Authorization: Bearer $TOKEN"
+```
+
 ## Contents
 
 - [Tech stack](#tech-stack)
@@ -39,7 +48,7 @@ Authorization: Bearer <token>
 | Persistence | H2 (in memory), Hibernate 7.4, Liquibase 5 |
 | Mapping | MapStruct 1.6, Lombok |
 | API docs | springdoc-openapi (Swagger UI) |
-| Testing | JUnit 5, Mockito, AssertJ, Spring Security Test, ArchUnit 1.5 |
+| Testing | JUnit 6, Mockito, AssertJ, Spring Security Test, ArchUnit 1.5 |
 
 ## Getting started
 
@@ -95,14 +104,7 @@ These credentials are for local demo purposes only. Passwords are stored as BCry
         -H "Authorization: Bearer <accessToken>"
    ```
 
-Both steps in one go, from a Bash shell:
-
-```bash
-TOKEN=$(curl -s -X POST http://localhost:8080/auth/login -H "Content-Type: application/json" \
-        -d '{"username": "user", "password": "user"}' | sed -E 's/.*"accessToken":"([^"]+)".*/\1/')
-curl "http://localhost:8080/prices?date=2020-06-14T16:00:00&productId=35455&brandId=1" \
-     -H "Authorization: Bearer $TOKEN"
-```
+To do both steps in one go, use the Bash snippet at the [top of this README](#prices-service).
 
 ### From Swagger UI
 
@@ -114,13 +116,15 @@ curl "http://localhost:8080/prices?date=2020-06-14T16:00:00&productId=35455&bran
 
 ## Architecture
 
-The project follows the **onion architecture**: the business core is in the centre, and every dependency points inwards.
+The project follows the **onion architecture**, with the domain modelled following **DDD**. The business core is in the centre, and every dependency points inwards.
+
+The split into `domain`, `application` and `infrastructure` layers comes from the onion architecture. The core talks to the outside through interfaces, the **ports**, implemented by **adapters** in `infrastructure`: that idea is shared with the hexagonal architecture, and the names of those classes reflect it.
 
 ```mermaid
 flowchart LR
     infrastructure["Infrastructure (adapters)<br/>rest · security · persistence · config"]
-    application["Application<br/>use cases · roles"]
-    domain["Domain<br/>model · business rules · ports"]
+    application["Application<br/>use cases (input ports) · roles"]
+    domain["Domain<br/>model · business rules · repository ports"]
     infrastructure --> application --> domain
     infrastructure --> domain
 ```
@@ -130,13 +134,25 @@ flowchart LR
 | Package | Ring | Contents |
 |---|---|---|
 | `domain.model` | Domain model | `Price`, value objects `Money`, `BrandId`, `ProductId` |
-| `domain.service` | Domain services | `ApplicablePriceSelector`: the business rule |
-| `domain.repository` | Domain services | `PriceRepositoryPort`: what the domain needs from storage |
-| `application` | Application services | `PriceServiceImpl` (the use case) and the `Roles` constants |
+| `domain.service` | Domain services | `ApplicablePriceSelector`: the business rule, the highest priority wins |
+| `domain.repository` | Domain services | `PriceRepositoryPort`: output port, what the domain needs from storage |
+| `domain.exception` | Domain model | Domain errors, such as `NotFoundException` |
+| `application.service` | Application services | `FindApplicablePriceUseCase` (input port) and `FindApplicablePriceService` (its implementation) |
+| `application.security` | Application services | `Roles` constants |
 | `infrastructure.rest` | Adapter | Controller, DTOs, error handling |
 | `infrastructure.persistence` | Adapter | JPA entities, repositories, `PriceRepositoryAdapter`, `UserDetailsServiceAdapter` |
 | `infrastructure.security` | Adapter | Security filter chain, login, JWT issuing and validation |
 | `infrastructure.config` | Adapter | Bean wiring for the core, JPA auditing, OpenAPI |
+
+### Adding a new use case
+
+1. Create the input port `<Action>UseCase` in `application.service`.
+2. Implement it in `<Action>Service`, in the same package. Keep it plain Java, with no Spring annotations.
+3. Register the bean in `ApplicationConfig`, with the port as its return type.
+4. If the use case needs new data, add the method to the output port in `domain.repository`, or create a new port there, and implement it in its adapter in `infrastructure.persistence`.
+5. Inject the `<Action>UseCase` port in the controller.
+
+### Architecture rules
 
 The rules are enforced by [`ArchitectureTest`](src/test/java/com/technical/test/prices/ArchitectureTest.java) with ArchUnit, so the build fails if they are broken:
 
@@ -155,7 +171,7 @@ db/changelog/
 └── v2.0/  users and roles tables, and the demo users
 ```
 
-Sample prices, for brand `1` (ZARA) and product `35455`:
+Sample prices, for brand `1` (BRAND_1) and product `35455`:
 
 | Price list | From | To | Priority | Price |
 |---|---|---|---|---|
@@ -174,9 +190,11 @@ The H2 web console is disabled.
 
 | Type | What it covers | Classes |
 |---|---|---|
-| Domain unit tests | Price date range, priority selection, `Money` validation | `PriceTest`, `ApplicablePriceSelectorTest`, `MoneyTest` |
-| Application unit tests | Use case orchestration, with the repository mocked | `PriceServiceImplTest` |
-| Security unit tests | Login flow, JWT configuration validation | `LoginServiceTest`, `JwtPropertiesTest` |
+| Domain unit tests | Priority selection, `Money` validation | `ApplicablePriceSelectorTest`, `MoneyTest` |
+| Application unit tests | Use case orchestration, with the repository mocked | `FindApplicablePriceServiceTest` |
+| Security unit tests | Login flow, JWT issuing and reading, JWT configuration validation | `LoginServiceTest`, `TokenServiceTest`, `JwtPropertiesTest` |
+| Infrastructure unit tests | Error handling, MapStruct mappers, loading users for the login | `GlobalExceptionHandlerTest`, `PriceEntityMapperTest`, `PriceResponseMapperTest`, `UserDetailsServiceAdapterTest` |
+| Persistence tests | The price query against H2 with the Liquibase sample data, including the edges of the date range | `PriceRepositoryAdapterTest` |
 | Integration tests | Full application, from HTTP to the database, with security enabled | `PriceControllerIntegrationTest`, `AuthControllerIntegrationTest` |
 | Architecture tests | Onion dependency rules | `ArchitectureTest` |
 
@@ -190,10 +208,12 @@ The integration tests cover the five scenarios of the exercise, for product `354
 | 4 | 2020-06-15 10:00 | 3 | 30.50 EUR |
 | 5 | 2020-06-16 21:00 | 4 | 38.95 EUR |
 
-They also cover the security flows end to end: logging in with each demo user, calling the API with the real token, and tampered, malformed or missing tokens.
+They also check the edges of a price's date range, which are inclusive: at 2020-06-14 15:00:00 and 18:30:00 price list 2 applies, and one second outside that range price list 1 applies.
+
+Finally, they cover the security flows end to end: logging in with each demo user, calling the API with the real token, and tampered, malformed or missing tokens.
 
 ## Development workflow
 
-- **Branches:** Git Flow. `main` holds released versions, tagged as `vX.Y.Z`. `develop` collects finished work, and changes are made in `feature/*` branches merged through pull requests.
+- **Branches:** Git Flow. `main` holds released versions, tagged as `vX.Y.Z`. `develop` collects finished work, and changes are made in branches named after the type of change (`feat/*`, `fix/*`, `refactor/*`, `test/*`), merged through pull requests.
 - **Commits:** [Conventional Commits](https://www.conventionalcommits.org/) (`feat:`, `fix:`, `refactor:`, `docs:`...). A `!` marks a breaking change.
-- **Versioning:** [Semantic Versioning](https://semver.org/). The next release is **2.0.0**, a major version, because it breaks the 1.x API: the price is now returned as a nested `price` object, and every request requires an access token.
+- **Versioning:** [Semantic Versioning](https://semver.org/). The latest release is **2.0.1**, a patch version with a fix, internal refactors and new tests. **2.0.0** was a major version, because it broke the 1.x API: the price is now returned as a nested `price` object, and every request requires an access token.

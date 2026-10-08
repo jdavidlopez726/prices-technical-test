@@ -1,7 +1,7 @@
 package com.technical.test.prices.infrastructure.rest;
 
 import com.technical.test.prices.application.security.Roles;
-import com.technical.test.prices.application.service.PriceServicePort;
+import com.technical.test.prices.application.service.FindApplicablePriceUseCase;
 import com.technical.test.prices.domain.model.BrandId;
 import com.technical.test.prices.domain.model.ProductId;
 import com.technical.test.prices.infrastructure.rest.api.PriceApi;
@@ -17,13 +17,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class PriceController implements PriceApi {
 
-    private final PriceServicePort priceService;
+    private final FindApplicablePriceUseCase findApplicablePriceUseCase;
     private final PriceResponseMapper priceResponseMapper;
 
     @Override
     @PreAuthorize("hasRole('" + Roles.USER + "')")
     public ResponseEntity<PriceResponse> getApplicablePrice(LocalDateTime date, Long productId, Long brandId) {
         return ResponseEntity.ok(priceResponseMapper.toResponse(
-                priceService.findApplicablePrice(new BrandId(brandId), new ProductId(productId), date)));
+                findApplicablePriceUseCase.findApplicablePrice(new BrandId(brandId), new ProductId(productId), date)));
     }
 }
