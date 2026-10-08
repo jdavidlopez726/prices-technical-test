@@ -216,4 +216,4 @@ Finally, they cover the security flows end to end: logging in with each demo use
 
 - **Branches:** Git Flow. `main` holds released versions, tagged as `vX.Y.Z`. `develop` collects finished work, and changes are made in branches named after the type of change (`feat/*`, `fix/*`, `refactor/*`, `test/*`), merged through pull requests.
 - **Commits:** [Conventional Commits](https://www.conventionalcommits.org/) (`feat:`, `fix:`, `refactor:`, `docs:`...). A `!` marks a breaking change.
-- **Versioning:** [Semantic Versioning](https://semver.org/). The latest release is **2.0.0**, a major version, because it broke the 1.x API: the price is now returned as a nested `price` object, and every request requires an access token.
+- **Versioning:** [Semantic Versioning](https://semver.org/). The latest release is **2.0.1**, a patch version with a fix, internal refactors and new tests. **2.0.0** was a major version, because it broke the 1.x API: the price is now returned as a nested `price` object, and every request requires an access token.
